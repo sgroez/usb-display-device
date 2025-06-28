@@ -19,7 +19,10 @@
 
     packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
       name = "usb-display-device-firmware";
-      src = ./src;
+      src = builtins.path {
+        path = ./src;
+        name = "source";
+      };
       nativeBuildInputs = [
         pkgs.cmake
         pkgs.python3
