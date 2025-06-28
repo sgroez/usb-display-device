@@ -34,6 +34,7 @@
         pkgs.pkgs.gnumake
         pkgs.binutils
         pkgs.gcc-arm-embedded
+        pkgs.picotool
       ];
 
       configurePhase = ''
