@@ -1,5 +1,5 @@
 {
-  description = "Development shell and automated build flake";
+  description = "Automated build flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
@@ -15,17 +15,6 @@
       fetchSubmodules = true;
     };
   in {
-    devShells.default = pkgs.mkShell {
-      nativeBuildInputs = [
-        pkgs.cmake
-        pkgs.python3
-        pkgs.gcc
-        pkgs.pkgs.gnumake
-        pkgs.binutils
-        pkgs.gcc-arm-embedded
-      ];
-    };
-
     packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
       name = "usb-display-device-firmware";
       src = ./src;
