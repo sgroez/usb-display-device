@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
 
     pico-sdk = {
-      url = "github:rasperrypi/pico-sdk";
+      url = "github:raspberrypi/pico-sdk";
       flake = false;
     };
   };
