@@ -3,15 +3,17 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
-
-    pico-sdk = {
-      url = "github:raspberrypi/pico-sdk";
-      flake = false;
-    };
   };
 
-  outputs = { self, nixpkgs, pico-sdk, ... }: let
+  outputs = { self, nixpkgs }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
+
+    pico-sdk = pkgs.fetchgit {
+      url = "https://github.com/raspberrypi/pico-sdk.git";
+      rev = "2.1.1";
+      sha256 = "0000000000000000000000000000000000000000000000000000";
+      fetchSubmodules = true;
+    };
   in {
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
