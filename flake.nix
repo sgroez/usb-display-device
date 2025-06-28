@@ -11,7 +11,7 @@
     pico-sdk = pkgs.fetchgit {
       url = "https://github.com/raspberrypi/pico-sdk.git";
       rev = "2.1.1";
-      sha256 = "0000000000000000000000000000000000000000000000000000";
+      sha256 = "8ru1uGjs11S2yQ+aRAvzU53K8mreZ+CC3H+ijfctuqg=";
       fetchSubmodules = true;
     };
   in {
