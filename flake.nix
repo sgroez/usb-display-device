@@ -49,12 +49,13 @@
       buildPhase = ''
         echo "Building..."
         make -j$(nproc)
+        cd ..
       '';
 
       installPhase = ''
         echo "Installation..."
         mkdir -p $out
-        cp build/blink.uf2 $out/
+        cp build/usb_display_device.uf2 $out/
         echo "Firmware copied to $out/blink.uf2"
       '';
     };
