@@ -1,7 +1,14 @@
 {
   description = "Development shell and automated build flake";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.05";
+
+    pico-sdk = {
+      url = "github:rasperrypi/pico-sdk";
+      flake = false;
+    };
+  };
 
   outputs = { self, nixpkgs }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
@@ -19,10 +26,7 @@
 
     packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
       name = "usb-display-device-firmware";
-      src = builtins.path {
-        path = ./src;
-        name = "source";
-      };
+      src = ./src;
       nativeBuildInputs = [
         pkgs.cmake
         pkgs.python3
@@ -36,7 +40,7 @@
         echo "Configuration..."
         mkdir build
         cd build
-        cmake ..
+        cmake .. -DPICO_SDK_PATH=${pico-sdk}
       '';
 
       buildPhase = ''
