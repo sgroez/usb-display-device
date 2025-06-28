@@ -48,7 +48,6 @@
 
       buildPhase = ''
         echo "Building..."
-        cd build
         make -j$(nproc)
       '';
 
