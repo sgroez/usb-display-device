@@ -5,7 +5,6 @@
 
   outputs = { self, nixpkgs }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    pico_sdk_path = ./pico-sdk;
   in {
     devShells.default = pkgs.mkShell {
       nativeBuildInputs = [
