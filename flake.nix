@@ -10,7 +10,7 @@
     };
   };
 
-  outputs = { self, nixpkgs }: let
+  outputs = { self, nixpkgs, pico-sdk, ... }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
   in {
     devShells.default = pkgs.mkShell {
