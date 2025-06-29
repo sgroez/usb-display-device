@@ -27,7 +27,6 @@
 
       patches = [ 
         ./patches/remove_example_auto_set_url.patch
-        ./patches/add_missing_include_pico_stdlib.patch
       ];
 
       dontBuild = true;

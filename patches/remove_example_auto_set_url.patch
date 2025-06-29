@@ -9,3 +9,30 @@ index 7948825..56bbe0e 100644
 -
 -# add url via pico_set_program_url
 -example_auto_set_url(display_driver)
+diff --git a/display.cpp b/display.cpp
+index dc39fe7..e787d06 100644
+--- a/display.cpp
++++ b/display.cpp
+@@ -1,4 +1,15 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <string>
++#include "pico/stdlib.h"
++#include "hardware/spi.h"
++
+ #include "display.h"
++#include "sharp-mip/sharp_mip_display.h"
++#include "sharp-mip/fonts/font_8x10.h"
++#include "sharp-mip/fonts/font_16x20.h"
++#include "sharp-mip/fonts/font_24x30.h"
++#include "sharp-mip/fonts/font_32x40.h"
+ 
+ Display::Display(uint16_t width, uint16_t height)
+ : kScreenWidth_{width}, kScreenHeight_{height}
+@@ -6,4 +17,4 @@ Display::Display(uint16_t width, uint16_t height)
+     // std::cout << "Display Contrustor" << "\n";
+ }
+ 
+-Display::~Display() = default;
+\ No newline at end of file
++Display::~Display() = default;
