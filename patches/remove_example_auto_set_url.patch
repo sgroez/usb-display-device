@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index abcdef1..1234567 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -24,7 +24,9 @@ target_link_libraries(display_driver
+     hardware_spi
+ )
+ 
+-# add url via pico_set_program_url
+-example_auto_set_url(display_driver)
++# add url via pico_set_program_url (disabled for non-example use)
++# example_auto_set_url(display_driver)
++
+
