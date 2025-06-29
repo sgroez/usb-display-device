@@ -1,0 +1,16 @@
+diff --git a/sharp-mip/sharp_mip_display.cpp b/sharp-mip/sharp_mip_display.cpp
+index 3e91915..77b59e0 100644
+--- a/sharp-mip/sharp_mip_display.cpp
++++ b/sharp-mip/sharp_mip_display.cpp
+@@ -1,3 +1,4 @@
++#include "pico/stdlib.h"
+ #include "sharp_mip_display.h"
+ 
+ SharpMipDisplay::SharpMipDisplay(uint16_t width, uint16_t height, spi_inst_t* spi, uint display_cs_pin)
+@@ -301,4 +302,4 @@ void SharpMipDisplay::PrintBinaryArray(const uint8_t* array_to_print, size_t wid
+         }
+         printf("\n");
+     }
+-}
+\ No newline at end of file
++}
