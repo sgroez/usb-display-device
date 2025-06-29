@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
-project(usb_display_device)
+project(usb_display_device LANGUAGES C CXX)
 
 pico_sdk_init()
 
