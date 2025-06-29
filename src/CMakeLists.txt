@@ -4,6 +4,9 @@ include(${PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 project(usb_display_device LANGUAGES C CXX)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 pico_sdk_init()
 
 add_subdirectory(${DISPLAY_DRIVER_PATH} display_driver)
