@@ -9,15 +9,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 pico_sdk_init()
 
-add_subdirectory(${DISPLAY_DRIVER_PATH} display_driver)
+add_subdirectory(${DISPLAY_DRIVER_PATH}/sharp-mip ${CMAKE_BINARY_DIR}/sharp-mip)
 
 add_executable(usb_display_device
-  main.c
+  main.cpp
+)
+
+target_include_directories(usb_display_device PRIVATE
+  ${DISPLAY_DRIVER_PATH}/sharp-mip
 )
 
 target_link_libraries(usb_display_device
-  pico_stdlib
   sharp_mip_display
+  pico_stdlib
 )
 
 pico_enable_stdio_usb(usb_display_device 1)
