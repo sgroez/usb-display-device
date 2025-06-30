@@ -45,7 +45,7 @@
         pkgs.cmake
         pkgs.python3
         pkgs.gcc
-        pkgs.pkgs.gnumake
+        pkgs.gnumake
         pkgs.binutils
         pkgs.gcc-arm-embedded
         pkgs.picotool
@@ -60,7 +60,7 @@
 
       buildPhase = ''
         echo "Building..."
-        make -j$(nproc)
+        make -j$(nproc) VERBOSE=1
         cd ..
       '';
 
