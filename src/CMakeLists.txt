@@ -15,6 +15,10 @@ add_executable(usb_display_device
   main.cpp
 )
 
+target_sources(sharp_mip_display PRIVATE
+  ${DISPLAY_DRIVER_PATH}/display.cpp
+)
+
 target_include_directories(usb_display_device PRIVATE
   ${DISPLAY_DRIVER_PATH}/sharp-mip
 )

@@ -60,7 +60,7 @@
 
       buildPhase = ''
         echo "Building..."
-        make -j$(nproc) VERBOSE=1
+        make -j$(nproc)
         cd ..
       '';
 

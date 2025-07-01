@@ -17,7 +17,7 @@ int main() {
 
     // Configure SPI
     spi_init(spi0, 2'000'000);  // 2 MHz
-    spi_set_format( spi1, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
+    spi_set_format( spi0, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
     gpio_set_function(SPI_MOSI_PIN, GPIO_FUNC_SPI);  // TX
     gpio_set_function(SPI_SCK_PIN, GPIO_FUNC_SPI);  // SCK
 
@@ -30,11 +30,11 @@ int main() {
     sleep_ms(1000);
 
     while(true) {
-    display->ClearScreen();
-    display->RefreshScreen(3,3);
-    sleep_ms(1000);
-    display->DrawHorizontalLine(3);
-    display->RefreshScreen(3,3);
+      display->ClearScreen();
+      display->RefreshScreen(3,3);
+      sleep_ms(1000);
+      display->DrawHorizontalLine(3);
+      display->RefreshScreen(3,3);
     }
     return 0;
 }
