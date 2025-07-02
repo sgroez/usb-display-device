@@ -32,6 +32,7 @@
 
 #include "usb_descriptors.h"
 
+#include "pico/stdlib.h"
 #include "hardware/spi.h"
 #include "sharp_mip_display.h"
 
@@ -77,9 +78,11 @@ int main(void)
   gpio_init(SPI_CS_PIN);
   gpio_set_dir(SPI_CS_PIN, GPIO_OUT);
   gpio_put(SPI_CS_PIN, 0);
+  sleep_ms(10);
 
   //Configure display
   SharpMipDisplay* display = new SharpMipDisplay(DISPLAY_WIDTH, DISPLAY_HEIGHT, spi0, SPI_CS_PIN);
+  display->ClearScreen();
 
   while (1)
   {
@@ -89,9 +92,20 @@ int main(void)
       //process framebuffer
       for (uint16_t y = 0; y < DISPLAY_HEIGHT; ++y) {
         for (uint16_t x = 0; x < DISPLAY_WIDTH; ++x) {
-          display->SetPixel(x, y);
+          uint32_t bit_index = y * DISPLAY_WIDTH + x;
+          uint32_t byte_index = bit_index / 8;
+          uint8_t bit_offset = 7 - (bit_index % 8);  // MSB first
+
+          bool pixel_on = (framebuffer[byte_index] >> bit_offset) & 0x01;
+
+          if (pixel_on) {
+            display->SetPixel(x, y);
+          } else {
+            display->ResetPixel(x, y);
+          }
         }
-    }
+      }
+      display->RefreshScreen(0, DISPLAY_HEIGHT);
 
       //reset framebuffer state
       frame_ready = false;

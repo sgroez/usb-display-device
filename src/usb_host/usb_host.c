@@ -78,15 +78,6 @@ int main(void)
         }
     }
 
-    // Receive response from device (up to 64 bytes)
-    uint8_t data_in[64];
-    res = libusb_bulk_transfer(dev_handle, EP_IN, data_in, sizeof(data_in), &transferred, 1000);
-    if (res == 0) {
-        printf("Received %d bytes: %.*s\n", transferred, transferred, data_in);
-    } else {
-        fprintf(stderr, "Error in bulk IN transfer: %s\n", libusb_error_name(res));
-    }
-
     // Cleanup
     libusb_release_interface(dev_handle, INTERFACE);
     libusb_close(dev_handle);
