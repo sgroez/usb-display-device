@@ -23,6 +23,11 @@ target_include_directories(usb_display_device PRIVATE
   ${DISPLAY_DRIVER_PATH}/sharp-mip
 )
 
+target_include_directories(usb_display_device PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+
 target_link_libraries(usb_display_device
   sharp_mip_display
   pico_stdlib

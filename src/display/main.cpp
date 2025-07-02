@@ -10,7 +10,6 @@
 #define DISPLAY_WIDTH 400U
 #define DISPLAY_HEIGHT 240U
 
-
 int main() {
   stdio_init_all();
   sleep_ms(1000);
@@ -40,4 +39,3 @@ int main() {
   }
   return 0;
 }
-
