@@ -11,6 +11,7 @@ pico_sdk_init()
 
 add_executable(usb
   usb.c
+  usb_descriptors.c
 )
 
 target_include_directories(usb PUBLIC
