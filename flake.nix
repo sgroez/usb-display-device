@@ -109,6 +109,7 @@
         name = "usb_host";
         src = ./src/usb_host;
         nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.pkg-config
           pkgs.libusb1
         ];
 
@@ -120,7 +121,8 @@
 
         buildPhase = ''
           echo "Building..."
-          gcc -o usb_host usb_host.c `pkg-config --cflags --libs libusb-1.0`
+          gcc -o usb_host ../usb_host.c `pkg-config --cflags --libs libusb-1.0`
+          cd ..
         '';
 
         installPhase = ''
