@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #define VENDOR_ID  0xCafe   // Replace with your device's VID
-#define PRODUCT_ID 0x4000   // Replace with your device's PID
+#define PRODUCT_ID 0x4010   // Replace with your device's PID
 #define INTERFACE  0        // Usually 0 if only one interface
 
 #define EP_OUT 0x01  // Endpoint 1 OUT
