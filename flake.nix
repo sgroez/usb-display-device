@@ -129,8 +129,8 @@
         installPhase = ''
           echo "Installation..."
           mkdir -p $out
-          cp build/display.uf2 $out/
-          echo "Firmware copied to $out/display.uf2"
+          cp build/usb_display.uf2 $out/
+          echo "Firmware copied to $out/usb_display.uf2"
         '';
       };
 
@@ -159,6 +159,33 @@
         mkdir -p $out
         cp build/usb_host $out/
         echo "Binary executable copied to $out/usb_host"
+        '';
+      };
+
+      usb_display_driver = pkgs.stdenv.mkDerivation {
+        name = "usb_display_driver";
+        src = ./src/usb_display_driver;
+        nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.linuxPackages.kernel.dev
+        ];
+
+        configurePhase = ''
+          echo "Configuration..."
+          mkdir build
+          cd build
+        '';
+
+        buildPhase = ''
+          echo "Building..."
+          make ..
+          cd ..
+        '';
+
+        installPhase = ''
+        echo "Installation..."
+        mkdir -p $out
+        cp build/usb_display_driver.ko $out/
+        echo "Binary executable copied to $out/usb_display_driver.ko"
         '';
       };
 
