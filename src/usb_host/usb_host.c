@@ -10,6 +10,33 @@
 #define EP_OUT 0x01  // Endpoint 1 OUT
 #define EP_IN  0x81  // Endpoint 1 IN (0x80 | 0x01)
 
+#define WIDTH 400
+#define HEIGHT 240
+#define FRAMEBUFFER_SIZE (WIDTH * HEIGHT / 8)
+#define PACKET_SIZE 64
+
+uint8_t framebuffer[FRAMEBUFFER_SIZE];
+
+// Generate a white square (100x100) in center of screen
+void generate_framebuffer() {
+    memset(framebuffer, 0x00, FRAMEBUFFER_SIZE);  // clear to black
+
+    int square_x_start = (WIDTH - 100) / 2;
+    int square_x_end = square_x_start + 100;
+    int square_y_start = (HEIGHT - 100) / 2;
+    int square_y_end = square_y_start + 100;
+
+    int bytes_per_row = WIDTH / 8;
+
+    for (int y = square_y_start; y < square_y_end; y++) {
+        for (int x = square_x_start; x < square_x_end; x++) {
+            int byte_index = y * bytes_per_row + (x / 8);
+            int bit_index = 7 - (x % 8);
+            framebuffer[byte_index] |= (1 << bit_index);
+        }
+    }
+}
+
 int main(void)
 {
     libusb_context *ctx = NULL;
@@ -17,8 +44,7 @@ int main(void)
     int transferred;
     int res;
 
-    uint8_t data_out[] = "Hello TinyUSB!";
-    uint8_t data_in[64];
+    generate_framebuffer();
 
     // Init libusb
     if (libusb_init(&ctx) < 0) {
@@ -42,15 +68,18 @@ int main(void)
         return 1;
     }
 
-    // Send data
-    res = libusb_bulk_transfer(dev_handle, EP_OUT, data_out, sizeof(data_out), &transferred, 1000);
-    if (res == 0) {
-        printf("Sent %d bytes: %s\n", transferred, data_out);
-    } else {
-        fprintf(stderr, "Error in bulk OUT transfer: %s\n", libusb_error_name(res));
+    // Send framebuffer in 64-byte chunks
+    for (int i = 0; i < FRAMEBUFFER_SIZE; i += PACKET_SIZE) {
+        int chunk_size = (i + PACKET_SIZE <= FRAMEBUFFER_SIZE) ? PACKET_SIZE : (FRAMEBUFFER_SIZE - i);
+        res = libusb_bulk_transfer(dev_handle, EP_OUT, framebuffer + i, chunk_size, &transferred, 1000);
+        if (res != 0) {
+            fprintf(stderr, "Error sending packet at offset %d: %s\n", i, libusb_error_name(res));
+            break;
+        }
     }
 
-    // Receive response
+    // Receive response from device (up to 64 bytes)
+    uint8_t data_in[64];
     res = libusb_bulk_transfer(dev_handle, EP_IN, data_in, sizeof(data_in), &transferred, 1000);
     if (res == 0) {
         printf("Received %d bytes: %.*s\n", transferred, transferred, data_in);

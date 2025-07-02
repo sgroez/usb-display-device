@@ -32,6 +32,15 @@
 
 #include "usb_descriptors.h"
 
+/*-------------CONFIG-------------*/
+#define FRAMEBUFFER_SIZE (400 * 240 / 8)
+#define USB_RX_BUFFER_SIZE 64
+
+/*-------------BUFFER-------------*/
+static uint8_t framebuffer[FRAMEBUFFER_SIZE];
+static uint32_t framebuffer_index = 0;
+static volatile bool frame_ready = false;
+
 /*------------- MAIN -------------*/
 int main(void)
 {
@@ -47,6 +56,17 @@ int main(void)
   while (1)
   {
     tud_task(); // tinyusb device task
+    
+    if (frame_ready) {
+      //process framebuffer
+      const char *msg = "Frame received\r\n";
+      tud_vendor_write(msg, strlen(msg));
+      tud_vendor_flush();
+
+      //reset framebuffer state
+      frame_ready = false;
+      framebuffer_index = 0;
+    }
   }
 }
 
@@ -65,6 +85,22 @@ void tud_vendor_rx_cb(uint8_t itf, uint8_t const* buffer, uint16_t bufsize)
 {
   (void) itf;
 
-  tud_vendor_write(buffer, bufsize);
-  tud_vendor_flush();
+  while (tud_vendor_available())
+  {
+    uint8_t temp[64];
+    uint32_t count = tud_vendor_read(temp, sizeof(temp));
+
+    // Store into framebuffer
+    if (framebuffer_index + count <= FRAMEBUFFER_SIZE) {
+      memcpy(&framebuffer[framebuffer_index], temp, count);
+      framebuffer_index += count;
+
+      if (framebuffer_index == FRAMEBUFFER_SIZE) {
+        frame_ready = true;
+      }
+    } else {
+      // Overflow detected; reset
+      framebuffer_index = 0;
+    }
+  }
 }
