@@ -14,8 +14,6 @@
       pkgs.gcc
       pkgs.gnumake
       pkgs.binutils
-      pkgs.gcc-arm-embedded
-      pkgs.picotool
     ];
 
     pico-sdk = pkgs.fetchgit {
@@ -52,7 +50,10 @@
       display = pkgs.stdenv.mkDerivation {
         name = "display";
         src = ./src/display;
-        nativeBuildInputs = sharedNativeBuildInputs;
+        nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.gcc-arm-embedded
+          pkgs.picotool
+        ];
 
         configurePhase = ''
           echo "Configuration..."
@@ -78,7 +79,10 @@
       usb = pkgs.stdenv.mkDerivation {
         name = "usb";
         src = ./src/usb;
-        nativeBuildInputs = sharedNativeBuildInputs;
+        nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.gcc-arm-embedded
+          pkgs.picotool
+        ];
 
         configurePhase = ''
           echo "Configuration..."
@@ -98,6 +102,32 @@
           mkdir -p $out
           cp build/usb.uf2 $out/
           echo "Firmware copied to $out/usb.uf2"
+        '';
+      };
+
+      usb_host = pkgs.stdenv.mkDerivation {
+        name = "usb_host";
+        src = ./src/usb_host;
+        nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.libusb1
+        ];
+
+        configurePhase = ''
+          echo "Configuration..."
+          mkdir build
+          cd build
+        '';
+
+        buildPhase = ''
+          echo "Building..."
+          gcc -o usb_host usb_host.c `pkg-config --cflags --libs libusb-1.0`
+        '';
+
+        installPhase = ''
+        echo "Installation..."
+        mkdir -p $out
+        cp build/usb_host $out/
+        echo "Binary executable copied to $out/usb_host"
         '';
       };
 
