@@ -105,6 +105,35 @@
         '';
       };
 
+      usb_display = pkgs.stdenv.mkDerivation {
+        name = "usb_display";
+        src = ./src/usb_display;
+        nativeBuildInputs = sharedNativeBuildInputs ++ [
+          pkgs.gcc-arm-embedded
+          pkgs.picotool
+        ];
+
+        configurePhase = ''
+          echo "Configuration..."
+          mkdir build
+          cd build
+          cmake .. -DPICO_SDK_PATH=${pico-sdk} -DDISPLAY_DRIVER_PATH=${sharp-display-patched}
+        '';
+
+        buildPhase = ''
+          echo "Building..."
+          make -j$(nproc)
+          cd ..
+        '';
+
+        installPhase = ''
+          echo "Installation..."
+          mkdir -p $out
+          cp build/display.uf2 $out/
+          echo "Firmware copied to $out/display.uf2"
+        '';
+      };
+
       usb_host = pkgs.stdenv.mkDerivation {
         name = "usb_host";
         src = ./src/usb_host;
