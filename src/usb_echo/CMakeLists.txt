@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 add_executable(usb
-  usb.c
+  usb_echo.c
   usb_descriptors.c
 )
 
@@ -36,4 +36,4 @@ set(TINYUSB_LWIP_PATH ${PICO_LWIP_PATH})
 # Some examples use this, and we need to set this here due to a bug in the TinyUSB CMake config
 set(TOP ${PICO_TINYUSB_PATH})
 
-pico_add_extra_outputs(usb)
+pico_add_extra_outputs(usb_echo)
