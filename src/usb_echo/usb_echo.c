@@ -24,6 +24,7 @@ int main(void) {
   while (1)
   {
     tud_task(); // tinyusb device task
+  }
 }
 
 // Called when data is received on vendor OUT endpoint

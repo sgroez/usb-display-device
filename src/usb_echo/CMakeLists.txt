@@ -9,24 +9,24 @@ set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
-add_executable(usb
+add_executable(usb_echo
   usb_echo.c
   usb_descriptors.c
 )
 
-target_include_directories(usb PUBLIC
+target_include_directories(usb_echo PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 
-target_link_libraries(usb PUBLIC
+target_link_libraries(usb_echo PUBLIC
   pico_stdlib
   tinyusb_device
   tinyusb_board
 )
 
-pico_enable_stdio_usb(usb 1)
-pico_enable_stdio_uart(usb 0)
+pico_enable_stdio_usb(usb_echo 1)
+pico_enable_stdio_uart(usb_echo 0)
 
 set(FAMILY rp2040)
 set(BOARD pico_sdk)
