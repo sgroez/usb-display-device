@@ -93,14 +93,14 @@ static void dev_disconnect(struct usb_interface *interface) {
   dev_info(&interface->dev, "USB device disconnected\n");
 }
 
-static int __init usb_display_driver_init(void) {
-  return usb_register(&usb_display_driver);
+static int __init usb_echo_driver_init(void) {
+  return usb_register(&usb_echo_driver);
 }
 
-static void __exit usb_display_driver_exit(void) {
-  usb_deregister(&usb_display_driver);
+static void __exit usb_echo_driver_exit(void) {
+  usb_deregister(&usb_echo_driver);
 }
 
-module_init(usb_display_driver_init);
-module_exit(usb_display_driver_exit);
+module_init(usb_echo_driver_init);
+module_exit(usb_echo_driver_exit);
 

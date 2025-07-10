@@ -7,6 +7,7 @@
 
   outputs = { self, nixpkgs, }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    kernel = pkgs.linuxPackages.kernel;
 
     sharedNativeBuildInputs = [
       pkgs.cmake
@@ -76,9 +77,9 @@
         '';
       };
 
-      usb = pkgs.stdenv.mkDerivation {
-        name = "usb";
-        src = ./src/usb;
+      usb_echo = pkgs.stdenv.mkDerivation {
+        name = "usb_echo";
+        src = ./src/usb_echo;
         nativeBuildInputs = sharedNativeBuildInputs ++ [
           pkgs.gcc-arm-embedded
           pkgs.picotool
@@ -100,8 +101,8 @@
         installPhase = ''
           echo "Installation..."
           mkdir -p $out
-          cp build/usb.uf2 $out/
-          echo "Firmware copied to $out/usb.uf2"
+          cp build/usb_echo.uf2 $out/
+          echo "Firmware copied to $out/usb_echo.uf2"
         '';
       };
 
@@ -134,58 +135,41 @@
         '';
       };
 
-      usb_host = pkgs.stdenv.mkDerivation {
-        name = "usb_host";
-        src = ./src/usb_host;
-        nativeBuildInputs = sharedNativeBuildInputs ++ [
-          pkgs.pkg-config
-          pkgs.libusb1
-        ];
-
-        configurePhase = ''
-          echo "Configuration..."
-          mkdir build
-          cd build
-        '';
+      usb_echo_driver = pkgs.stdenv.mkDerivation {
+        name = "usb_echo_driver";
+        src = ./src/usb_echo_driver;
+        nativeBuildInputs = sharedNativeBuildInputs;
+        dontConfigure = true;
 
         buildPhase = ''
           echo "Building..."
-          gcc -o usb_host ../usb_host.c `pkg-config --cflags --libs libusb-1.0`
-          cd ..
+          make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build M=$(pwd) modules
         '';
 
         installPhase = ''
-        echo "Installation..."
-        mkdir -p $out
-        cp build/usb_host $out/
-        echo "Binary executable copied to $out/usb_host"
+          echo "Installation..."
+          mkdir -p $out
+          cp usb_echo_driver.ko $out/
+          echo "Loadable kernel module copied to $out/usb_echo_driver.ko"
         '';
       };
 
       usb_display_driver = pkgs.stdenv.mkDerivation {
         name = "usb_display_driver";
         src = ./src/usb_display_driver;
-        nativeBuildInputs = sharedNativeBuildInputs ++ [
-          pkgs.linuxPackages.kernel.dev
-        ];
-
-        configurePhase = ''
-          echo "Configuration..."
-          mkdir build
-          cd build
-        '';
+        nativeBuildInputs = sharedNativeBuildInputs;
+        dontConfigure = true;
 
         buildPhase = ''
           echo "Building..."
-          make ..
-          cd ..
+          make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build M=$(pwd) modules
         '';
 
         installPhase = ''
-        echo "Installation..."
-        mkdir -p $out
-        cp build/usb_display_driver.ko $out/
-        echo "Binary executable copied to $out/usb_display_driver.ko"
+          echo "Installation..."
+          mkdir -p $out
+          cp usb_display_driver.ko $out/
+          echo "Loadable kernel module copied to $out/usb_display_driver.ko"
         '';
       };
 
