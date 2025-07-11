@@ -12,9 +12,6 @@ typedef struct {
     uint8_t sck;
     uint8_t mosi;
     uint8_t cs;
-    uint16_t width;
-    uint16_t height;
-    uint8_t* buffer;
     bool vcom;
 } Sharp_Display;
 
@@ -25,8 +22,6 @@ typedef struct {
  * @param sck GPIO pin for SCK
  * @param mosi GPIO pin for MOSI
  * @param cs GPIO pin for Chip Select
- * @param width Display width in pixels
- * @param height Display height in pixels
  * @param vcom Initial vcom state
  * @return Sharp_Display* Pointer to allocated Sharp_Display struct, or NULL on failure
  */
@@ -34,8 +29,6 @@ Sharp_Display* NewSharpDisplay(spi_inst_t* spi,
                               uint8_t sck,
                               uint8_t mosi,
                               uint8_t cs,
-                              uint16_t width,
-                              uint16_t height,
                               bool vcom);
 
 /**
