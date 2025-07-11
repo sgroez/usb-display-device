@@ -48,15 +48,29 @@ Sharp_Display* NewSharpDisplay(spi_inst_t* spi,
   return d;
 }
 
-void ExecuteCommand(Sharp_Display* d, uint8_t *buffer, size_t length) {
-  printf("Executing command: %d\n", buffer[0]);
+void StartCommand(Sharp_Display* d) {
+  uint8_t commandByte = 0b10000000;
+  printf("Executing command: %d\n", commandByte);
   //Toggle vcom bit if vcom is true
   if (d->vcom)
-    buffer[0] |= vcomByte;
+    commandByte |= vcomByte;
   d->vcom = !d->vcom;
 
+  //Start command with cs high and sending comandByte
   gpio_put(d->cs, 1);
-  spi_write_blocking(d->spi, buffer, length);
+  spi_write_blocking(d->spi, &commandByte, 1);
+}
+
+void EndCommand(Sharp_Display* d) {
+  uint8_t endByte =  0b00000000;
+  printf("Ending command transfer.");
+  //End command with sending endByte cs low
+  spi_write_blocking(d->spi, &endByte, 1);
   gpio_put(d->cs, 0);
   sleep_ms(10);
+}
+
+void TransmitData(Sharp_Display* d, uint8_t *buffer, size_t length) {
+  printf("Transmitting data...");
+  spi_write_blocking(d->spi, buffer, length);
 }

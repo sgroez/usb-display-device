@@ -9,7 +9,7 @@
 #include "hardware/spi.h"
 #include "sharp_display.h"
 
-static SharpDisplay* display;
+static Sharp_Display* disp;
 
 /*--------------MAIN--------------*/
 void setup() {
@@ -25,7 +25,7 @@ void setup() {
   stdio_init_all();
   sleep_ms(1000);
 
-  display = NewSharpDisplay(spi0, 2, 3, 1, false);
+  disp = NewSharpDisplay(spi0, 2, 3, 1, false);
 }
 
 int main(void) {
@@ -39,7 +39,12 @@ int main(void) {
 
 // Called when data is received on vendor OUT endpoint
 void tud_vendor_rx_cb(uint8_t itf, uint8_t const* buffer, uint16_t bufsize) {
-  ExecuteCommand(display, buffer, bufsize);
+  if (bufsize != 1)
+    TransmitData(disp, buffer, bufsize);
+  if (buffer[0] == 0b00000000)
+    EndCommand(disp);
+  else
+    StartCommand(disp);
 }
 
 // Device mount/unmount/suspend/resume callbacks stay unchanged

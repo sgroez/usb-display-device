@@ -23,6 +23,7 @@ target_link_libraries(usb_display PUBLIC
   pico_stdlib
   tinyusb_device
   tinyusb_board
+  hardware_spi
 )
 
 pico_enable_stdio_usb(usb_display 1)

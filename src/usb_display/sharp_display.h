@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <stddef.h>       // for size_t
 #include "pico/stdlib.h"
 #include "hardware/spi.h"
 
+// Forward declaration of Sharp_Display struct
 typedef struct {
     spi_inst_t* spi;
     uint8_t sck;
@@ -15,30 +15,21 @@ typedef struct {
     bool vcom;
 } Sharp_Display;
 
-/**
- * @brief Allocate and initialize a new Sharp_Display instance.
- * 
- * @param spi Pointer to spi instance (e.g., spi0, spi1)
- * @param sck GPIO pin for SCK
- * @param mosi GPIO pin for MOSI
- * @param cs GPIO pin for Chip Select
- * @param vcom Initial vcom state
- * @return Sharp_Display* Pointer to allocated Sharp_Display struct, or NULL on failure
- */
+// Create a new Sharp_Display instance and initialize SPI and GPIO pins
 Sharp_Display* NewSharpDisplay(spi_inst_t* spi,
                               uint8_t sck,
                               uint8_t mosi,
                               uint8_t cs,
                               bool vcom);
 
-/**
- * @brief Send a command buffer to the display via SPI.
- * 
- * @param d Pointer to Sharp_Display instance
- * @param buffer Pointer to command data buffer
- * @param length Length of the buffer in bytes
- */
-void ExecuteCommand(Sharp_Display* d, uint8_t *buffer, size_t length);
+// Begin a command transfer
+void StartCommand(Sharp_Display* d);
+
+// End the current command transfer
+void EndCommand(Sharp_Display* d);
+
+// Transmit data bytes to the display
+void TransmitData(Sharp_Display* d, uint8_t *buffer, size_t length);
 
 #endif // SHARP_DISPLAY_H
 
