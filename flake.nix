@@ -60,7 +60,7 @@
           echo "Configuration..."
           mkdir build
           cd build
-          cmake .. -DPICO_SDK_PATH=${pico-sdk} -DDISPLAY_DRIVER_PATH=${sharp-display-patched}
+          cmake .. -DPICO_SDK_PATH=${pico-sdk}
         '';
 
         buildPhase = ''
