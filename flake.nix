@@ -131,6 +131,25 @@
         '';
       };
 
+      virutal_display_driver = pkgs.stdenv.mkDerivation {
+        name = "virtual_display_driver";
+        src = ./src/virtual_display_driver;
+        nativeBuildInputs = sharedNativeBuildInputs;
+        dontConfigure = true;
+
+        buildPhase = ''
+          echo "Building..."
+          make -C ${kernel.dev}/lib/modules/${kernel.modDirVersion}/build M=$(pwd) modules
+        '';
+
+        installPhase = ''
+          echo "Installation..."
+          mkdir -p $out
+          cp virtual_display_driver.ko $out/
+          echo "Loadable kernel module copied to $out/virtual_display_driver.ko"
+        '';
+      };
+
       usb_display_driver = pkgs.stdenv.mkDerivation {
         name = "usb_display_driver";
         src = ./src/usb_display_driver;

@@ -1,16 +1,28 @@
-// SPDX-License-Identifier: GPL-2.0
 #include <linux/module.h>
-#include <linux/platform_device.h>
+#include <linux/kernel.h>
+#include <linux/usb.h>
 #include <drm/drm_drv.h>
 #include <drm/drm_device.h>
 #include <drm/drm_file.h>
 #include <drm/drm_ioctl.h>
 
-#define DRIVER_NAME     "my_drm"
-#define DRIVER_DESC     "Minimal DRM driver"
-#define DRIVER_DATE     "20250805"
-#define DRIVER_MAJOR    1
-#define DRIVER_MINOR    0
+MODULE_AUTHOR("SGROEZ");
+MODULE_DESCRIPTION("USB display driver");
+MODULE_LICENSE("GPL");
+
+#define DRIVER_NAME "usb_display_driver"
+#define DRIVER_DESC "USB display driver"
+#define DRIVER_DATE "20250805"
+#define DRIVER_MAJOR 1
+#define DRIVER_MINOR 0
+
+#define USB_VENDOR_ID  0xcafe
+#define USB_PRODUCT_ID 0x4010
+
+#define EP_OUT     0x01
+#define EP_IN      0x81
+#define PACKET_SIZE 64
+#define TIMEOUT_MS 1000
 
 static int my_drm_open(struct drm_device *dev, struct drm_file *file)
 {
@@ -34,76 +46,57 @@ static const struct drm_driver my_drm_driver = {
     .minor = DRIVER_MINOR,
 };
 
-static int my_platform_probe(struct platform_device *pdev)
-{
+//Device table to match device with driver
+static struct usb_device_id dev_table[] = {
+  {USB_DEVICE(USB_VENDOR_ID, USB_PRODUCT_ID)},
+  {}
+};
+
+//Exports the device table so the system can auto match when device is plugged in
+MODULE_DEVICE_TABLE(usb, dev_table);
+
+static int dev_probe(struct usb_interface *interface, const struct usb_device_id *id) {
     struct drm_device *drm;
     int ret;
 
-    drm = drm_dev_alloc(&my_drm_driver, &pdev->dev);
+    drm = drm_dev_alloc(&my_drm_driver, &interface->dev);
     if (IS_ERR(drm))
         return PTR_ERR(drm);
 
-    platform_set_drvdata(pdev, drm);
+    usb_set_intfdata(interface, drm);
 
     ret = drm_dev_register(drm, 0);
     if (ret) {
         drm_dev_put(drm);
         return ret;
     }
-
-    pr_info("my_drm: platform device probed\n");
+    dev_info(&interface->dev, "USB device plugged in\n");
     return 0;
 }
 
-static void my_platform_remove(struct platform_device *pdev)
-{
-    struct drm_device *drm = platform_get_drvdata(pdev);
-
-    drm_dev_unregister(drm);
-    drm_dev_put(drm);
-
-    pr_info("my_drm: platform device removed\n");
+static void dev_disconnect(struct usb_interface *interface) {
+  struct drm_device *drm = usb_get_intfdata(interface);
+  drm_dev_unregister(drm);
+  drm_dev_put(drm);
+  dev_info(&interface->dev, "USB device disconnected\n");
 }
 
-static struct platform_driver my_platform_driver = {
-    .probe  = my_platform_probe,
-    .remove = my_platform_remove,
-    .driver = {
-        .name = DRIVER_NAME,
-    },
+//Base usb struct
+static struct usb_driver usb_display_driver = {
+  .name = "usb_display_driver",
+  .id_table = dev_table,
+  .probe = dev_probe,
+  .disconnect = dev_disconnect,
 };
 
-static struct platform_device *my_platform_device;
-
-static int __init my_drm_init(void)
-{
-    int ret;
-
-    my_platform_device = platform_device_register_simple(DRIVER_NAME, -1, NULL, 0);
-    if (IS_ERR(my_platform_device))
-        return PTR_ERR(my_platform_device);
-
-    ret = platform_driver_register(&my_platform_driver);
-    if (ret) {
-        platform_device_unregister(my_platform_device);
-        return ret;
-    }
-
-    pr_info("my_drm: module loaded\n");
-    return 0;
+static int __init usb_display_driver_init(void) {
+  return usb_register(&usb_display_driver);
 }
 
-static void __exit my_drm_exit(void)
-{
-    platform_driver_unregister(&my_platform_driver);
-    platform_device_unregister(my_platform_device);
-    pr_info("my_drm: module unloaded\n");
+static void __exit usb_display_driver_exit(void) {
+  usb_deregister(&usb_display_driver);
 }
 
-module_init(my_drm_init);
-module_exit(my_drm_exit);
-
-MODULE_AUTHOR("Your Name");
-MODULE_DESCRIPTION("Minimal DRM Driver Skeleton");
-MODULE_LICENSE("GPL");
+module_init(usb_display_driver_init);
+module_exit(usb_display_driver_exit);
 
